@@ -1,0 +1,23 @@
+{
+  "name": "markdown-mcp-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Live markdown preview MCP server with shared browser hub",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @markdown-mcp/shared && npm run build -w @markdown-mcp/web && npm run build:ts -w @markdown-mcp/hub && node scripts/copy-web.mjs && npm run build -w markdown-mcp",
+    "dev:hub": "npm run dev -w @markdown-mcp/hub",
+    "dev:web": "npm run dev -w @markdown-mcp/web",
+    "dev:mcp": "npm run dev -w markdown-mcp",
+    "start:hub": "npm run start -w @markdown-mcp/hub",
+    "start:mcp": "npm run start -w markdown-mcp",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "author": "MarkdownMCP"
+}

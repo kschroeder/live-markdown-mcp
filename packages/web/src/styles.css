@@ -1,0 +1,131 @@
+:root,
+[data-theme="light"] {
+  --bg: #f3efe8;
+  --bg-wash: #ebe4d8;
+  --surface: #fffcf7;
+  --surface-2: #f7f1e8;
+  --ink: #2a2730;
+  --ink-soft: #5c5666;
+  --ink-faint: #8a8394;
+  --line: rgba(42, 39, 48, 0.08);
+  --line-strong: rgba(42, 39, 48, 0.12);
+  --accent: #e07a5f;
+  --accent-deep: #c45d42;
+  --accent-soft: rgba(224, 122, 95, 0.14);
+  --accent-glow: rgba(224, 122, 95, 0.22);
+  --mint: #3d9b7a;
+  --mint-soft: rgba(61, 155, 122, 0.14);
+  --rose: #c45c6a;
+  --rose-soft: rgba(196, 92, 106, 0.12);
+  --amber: #c9922a;
+  --amber-soft: rgba(201, 146, 42, 0.16);
+  --shadow: 0 1px 2px rgba(42, 39, 48, 0.04), 0 12px 40px rgba(42, 39, 48, 0.07);
+  --shadow-sm: 0 1px 2px rgba(42, 39, 48, 0.05), 0 4px 14px rgba(42, 39, 48, 0.05);
+  --radius: 6px;
+  --radius-sm: 4px;
+  --font: "DM Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --prose-code-bg: #efe8dc;
+  --prose-pre-bg: #2a2730;
+  --prose-pre-fg: #f3efe8;
+  --diff-add-bg: var(--mint-soft);
+  --diff-add-bar: var(--mint);
+  --diff-del-bg: var(--rose-soft);
+  --diff-del-bar: var(--rose);
+  --diff-mod-bg: var(--amber-soft);
+  --diff-mod-bar: var(--amber);
+}
+
+[data-theme="dark"] {
+  --bg: #1a1720;
+  --bg-wash: #14121a;
+  --surface: #24202c;
+  --surface-2: #2c2735;
+  --ink: #f3efe8;
+  --ink-soft: #b8b0c2;
+  --ink-faint: #7e768c;
+  --line: rgba(243, 239, 232, 0.08);
+  --line-strong: rgba(243, 239, 232, 0.12);
+  --accent: #f0a090;
+  --accent-deep: #e07a5f;
+  --accent-soft: rgba(240, 160, 144, 0.14);
+  --accent-glow: rgba(240, 160, 144, 0.2);
+  --mint: #5ecf9f;
+  --mint-soft: rgba(94, 207, 159, 0.14);
+  --rose: #f08a96;
+  --rose-soft: rgba(240, 138, 150, 0.12);
+  --amber: #e0b45c;
+  --amber-soft: rgba(224, 180, 92, 0.14);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 18px 48px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2), 0 6px 16px rgba(0, 0, 0, 0.2);
+  --prose-code-bg: #342e3f;
+  --prose-pre-bg: #121018;
+  --prose-pre-fg: #efe8dc;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, var(--accent-soft), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(61, 155, 122, 0.08), transparent 50%),
+    var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* KaTeX / highlight defaults */
+.hljs {
+  background: transparent;
+  color: inherit;
+}
+
+.katex-display {
+  margin: 1em 0;
+  overflow-x: auto;
+}
+
+.mermaid-wrap {
+  margin: 1.2em 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.mermaid {
+  margin: 0;
+  text-align: center;
+}
+
+.mermaid-error {
+  text-align: left;
+  background: var(--prose-code-bg);
+  padding: 12px 14px;
+  border-radius: 6px;
+  overflow: auto;
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+.mermaid-error-msg {
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}

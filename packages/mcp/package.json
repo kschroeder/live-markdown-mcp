@@ -1,0 +1,42 @@
+{
+  "name": "markdown-mcp",
+  "version": "0.1.0",
+  "description": "MCP server: live markdown preview hub for LLM agents",
+  "type": "module",
+  "bin": {
+    "markdown-mcp": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "dev": "tsx src/cli.ts",
+    "start": "node dist/cli.js"
+  },
+  "dependencies": {
+    "@markdown-mcp/hub": "*",
+    "@markdown-mcp/shared": "*",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "markdown",
+    "preview",
+    "llm",
+    "grok"
+  ],
+  "license": "MIT"
+}

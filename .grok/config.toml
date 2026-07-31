@@ -1,0 +1,6 @@
+# Absolute path so Grok can start the server from any cwd.
+[mcp_servers.markdown-mcp]
+command = "node"
+args = ["F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js"]
+enabled = true
+startup_timeout_sec = 60
