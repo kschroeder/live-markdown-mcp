@@ -13,7 +13,8 @@
     "dev:mcp": "npm run dev -w markdown-mcp",
     "start:hub": "npm run start -w @markdown-mcp/hub",
     "start:mcp": "npm run start -w markdown-mcp",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:e2e": "npm run test:e2e:all -w @markdown-mcp/web"
   },
   "engines": {
     "node": ">=20"
