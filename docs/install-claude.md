@@ -2,7 +2,7 @@
 
 ```bash
 npm install && npm run build
-claude mcp add markdown-mcp -- node /absolute/path/to/MarkdownMCP/packages/mcp/dist/cli.js
+claude mcp add markdown-mcp -- node /absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js
 ```
 
 Project-level `.mcp.json`:
@@ -12,7 +12,7 @@ Project-level `.mcp.json`:
   "mcpServers": {
     "markdown-mcp": {
       "command": "node",
-      "args": ["/absolute/path/to/MarkdownMCP/packages/mcp/dist/cli.js"]
+      "args": ["/absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js"]
     }
   }
 }

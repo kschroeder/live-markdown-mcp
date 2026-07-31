@@ -22,7 +22,7 @@ npm install
 npm run build
 
 # User-level MCP (Grok)
-grok mcp add markdown-mcp -- node /absolute/path/to/MarkdownMCP/packages/mcp/dist/cli.js
+grok mcp add markdown-mcp -- node /absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js
 ```
 
 Or with a global/workspace link:
@@ -37,7 +37,7 @@ grok mcp add markdown-mcp -- markdown-mcp
 ```toml
 [mcp_servers.markdown-mcp]
 command = "node"
-args = ["F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js"]
+args = ["/absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js"]
 enabled = true
 startup_timeout_sec = 60
 ```
@@ -54,7 +54,7 @@ Copy-Item -Recurse .grok/skills/markdown-scope $HOME/.grok/skills/markdown-scope
 ### Claude Code
 
 ```bash
-claude mcp add markdown-mcp -- node /absolute/path/to/packages/mcp/dist/cli.js
+claude mcp add markdown-mcp -- node /absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js
 ```
 
 Or project `.mcp.json`:
@@ -64,7 +64,7 @@ Or project `.mcp.json`:
   "mcpServers": {
     "markdown-mcp": {
       "command": "node",
-      "args": ["F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js"]
+      "args": ["/absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js"]
     }
   }
 }
@@ -79,7 +79,7 @@ Or project `.mcp.json`:
   "mcpServers": {
     "markdown-mcp": {
       "command": "node",
-      "args": ["F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js"]
+      "args": ["/absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js"]
     }
   }
 }

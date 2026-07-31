@@ -928,7 +928,7 @@
 
           <article class="doc-card" id="doc">
             <div class="path-row">
-              <code id="docPath">F:/Grok/Projects/demo/docs/architecture.md</code>
+              <code id="docPath">/path/to/project/docs/architecture.md</code>
               <span class="meta" id="docUpdated">Updated a moment ago</span>
             </div>
             <div class="prose" id="prose"></div>
@@ -977,8 +977,8 @@
 
             <div class="field">
               <label for="roots">Allowed path roots</label>
-              <textarea id="roots" spellcheck="false">F:/Grok/Projects
-C:/Users/you/Documents</textarea>
+              <textarea id="roots" spellcheck="false">/path/to/projects
+/path/to/documents</textarea>
             </div>
 
             <label class="check">
@@ -1033,7 +1033,7 @@ C:/Users/you/Documents</textarea>
       </div>
       <div class="field">
         <label for="wizRoots">Allowed path roots</label>
-        <textarea id="wizRoots" spellcheck="false">F:/Grok/Projects</textarea>
+        <textarea id="wizRoots" spellcheck="false">/path/to/projects</textarea>
       </div>
       <div class="btn-row">
         <button class="btn primary" type="button" id="finishWizard">Save &amp; continue</button>
@@ -1054,7 +1054,7 @@ C:/Users/you/Documents</textarea>
     const docs = {
       architecture: {
         name: "architecture.md",
-        path: "F:/Grok/Projects/demo/docs/architecture.md",
+        path: "/path/to/project/docs/architecture.md",
         html: `
           <h1>Architecture</h1>
           <p class="diff-mod">MarkdownMCP is a singleton hub with thin MCP bridges. Agents call one tool to put a file in scope; the UI watches the disk and keeps tabs live.</p>
@@ -1086,7 +1086,7 @@ C:/Users/you/Documents</textarea>
       },
       plan: {
         name: "plan.md",
-        path: "F:/Grok/Projects/demo/PLAN.md",
+        path: "/path/to/project/PLAN.md",
         html: `
           <h1>Implementation plan</h1>
           <p>Vertical slice first: hub lock, one scope tool, tabs, live reload, then diffs + history.</p>
@@ -1100,7 +1100,7 @@ C:/Users/you/Documents</textarea>
       },
       readme: {
         name: "README.md",
-        path: "F:/Grok/Projects/demo/README.md",
+        path: "/path/to/project/README.md",
         html: `
           <h1>Demo project</h1>
           <p>Third tab for multi-doc layout. Close tabs you do not need — that unwatches the file.</p>

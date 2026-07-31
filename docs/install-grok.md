@@ -3,7 +3,7 @@
 ## 1. Build
 
 ```bash
-cd /path/to/MarkdownMCP
+cd /path/to/live-markdown-mcp
 npm install
 npm run build
 ```
@@ -11,10 +11,10 @@ npm run build
 ## 2. Register MCP
 
 ```bash
-grok mcp add markdown-mcp -- node F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js
+grok mcp add markdown-mcp -- node /absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js
 ```
 
-Use your real absolute path. On Windows, forward slashes are fine.
+Replace with your real absolute path. On Windows, forward slashes are fine.
 
 Raise startup timeout if cold start is slow:
 
@@ -22,16 +22,21 @@ Raise startup timeout if cold start is slow:
 # ~/.grok/config.toml
 [mcp_servers.markdown-mcp]
 command = "node"
-args = ["F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js"]
+args = ["/absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js"]
 enabled = true
 startup_timeout_sec = 60
 ```
 
 ## 3. Skill (recommended)
 
+```bash
+# Unix / macOS
+cp -R .grok/skills/markdown-scope ~/.grok/skills/markdown-scope
+```
+
 ```powershell
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.grok\skills" | Out-Null
-Copy-Item -Recurse -Force "F:\Grok\Projects\MarkdownMCP\.grok\skills\markdown-scope" "$env:USERPROFILE\.grok\skills\markdown-scope"
+# Windows PowerShell
+Copy-Item -Recurse -Force .\.grok\skills\markdown-scope $HOME\.grok\skills\markdown-scope
 ```
 
 ## 4. Verify

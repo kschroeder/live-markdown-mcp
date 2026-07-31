@@ -10,3 +10,10 @@ packages/web/dist/
 .vite/
 tmp-preview.md
 *.local
+
+# Local machine config (paths differ per developer)
+.grok/config.toml
+
+# Ad-hoc preview demos (not part of the product)
+demo-*.md
+e2e-fixture.md

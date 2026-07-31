@@ -7,7 +7,7 @@ Build the monorepo, then add to `.cursor/mcp.json`:
   "mcpServers": {
     "markdown-mcp": {
       "command": "node",
-      "args": ["F:/Grok/Projects/MarkdownMCP/packages/mcp/dist/cli.js"]
+      "args": ["/absolute/path/to/live-markdown-mcp/packages/mcp/dist/cli.js"]
     }
   }
 }
