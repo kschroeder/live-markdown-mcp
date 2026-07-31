@@ -131,11 +131,38 @@ function toggleSide(mode: "history" | "settings") {
 async function persistSettings(partial: Partial<AppSettings>, confirmNonLocal = false) {
   try {
     errorMsg.value = "";
-    const next = await saveSettings(partial, { confirmNonLocal });
+    const next = await saveSettings(
+      { ...settings.value, ...partial },
+      { confirmNonLocal }
+    );
     settings.value = next;
+    draftSettings.value = { ...next };
     applyTheme(next.theme);
-    showChanges.value = next.showChangesByDefault;
+    if (partial.showChangesByDefault !== undefined) {
+      showChanges.value = next.showChangesByDefault;
+    }
   } catch (e) {
+    errorMsg.value = String(e);
+  }
+}
+
+/** Toolbar Changes toggle — keep hub settings.json in sync across refresh/restart. */
+async function toggleShowChanges() {
+  const next = !showChanges.value;
+  showChanges.value = next;
+  settings.value = { ...settings.value, showChangesByDefault: next };
+  draftSettings.value = { ...draftSettings.value, showChangesByDefault: next };
+  try {
+    errorMsg.value = "";
+    const saved = await saveSettings({
+      ...settings.value,
+      showChangesByDefault: next,
+    });
+    settings.value = saved;
+  } catch (e) {
+    // Revert UI if persist fails
+    showChanges.value = !next;
+    settings.value = { ...settings.value, showChangesByDefault: !next };
     errorMsg.value = String(e);
   }
 }
@@ -212,7 +239,10 @@ onMounted(async () => {
     onFileRemoved,
     onSettings: (s) => {
       settings.value = s;
+      draftSettings.value = { ...s };
       applyTheme(s.theme);
+      // Stay aligned when settings change elsewhere (other tab / settings panel)
+      showChanges.value = s.showChangesByDefault;
     },
   });
 
@@ -258,8 +288,8 @@ const rootsText = computed({
           type="button"
           class="pill-toggle"
           :aria-pressed="showChanges"
-          title="Highlight additions, edits, and removals"
-          @click="showChanges = !showChanges"
+          title="Highlight additions, edits, and removals (saved to settings)"
+          @click="toggleShowChanges"
         >
           <span class="switch" aria-hidden="true" />
           Changes

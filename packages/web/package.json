@@ -9,7 +9,9 @@
     "typecheck": "vue-tsc -p tsconfig.json --noEmit",
     "preview": "vite preview",
     "test:unit": "node --import tsx --test src/markdown.fence.test.ts",
-    "test:e2e": "tsx ../../scripts/e2e-preview.mts"
+    "test:e2e": "tsx ../../scripts/e2e-preview.mts",
+    "test:e2e:changes": "tsx ../../scripts/e2e-changes-toggle.mts",
+    "test:e2e:all": "npm run test:e2e && npm run test:e2e:changes"
   },
   "dependencies": {
     "@markdown-mcp/shared": "*",
