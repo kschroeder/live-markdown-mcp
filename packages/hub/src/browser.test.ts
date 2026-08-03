@@ -17,6 +17,16 @@ import {
   type ResolvedBrowser,
 } from "./browser.js";
 
+/**
+ * Opaque hub URL for unit tests that only check argv / spawn wiring.
+ * Nothing in this file binds a socket — do not treat these as reserved ports.
+ * Port 0 marks “not a fixed service port” in intent.
+ */
+function testHubUrl(path = "/"): string {
+  const p = path.startsWith("/") ? path : `/${path}`;
+  return `http://127.0.0.1:0${p}`;
+}
+
 describe("classifyBrowser", () => {
   it("maps common Chromium-family names", () => {
     assert.equal(classifyBrowser("Google Chrome"), "chromium");
@@ -103,7 +113,7 @@ describe("resolveExecutableForLabel", () => {
 
 describe("buildBrowserArgs", () => {
   const profile = path.join(os.tmpdir(), "mmcp-profile-test");
-  const url = "http://127.0.0.1:54321/";
+  const url = testHubUrl();
 
   it("uses user-data-dir for chromium without --new-window", () => {
     const args = buildBrowserArgs("chromium", profile, url);
@@ -174,7 +184,7 @@ describe("openManagedBrowserOnce reconnect-first", () => {
 
   it("skips launch when a managed browser is already running", async () => {
     const { deps, spawns } = mockDeps({ running: true });
-    const result = await openManagedBrowserOnce("http://127.0.0.1:9/", deps);
+    const result = await openManagedBrowserOnce(testHubUrl("/already"), deps);
     assert.equal(result.opened, false);
     assert.equal(result.reason, "already_running");
     assert.equal(spawns.length, 0);
@@ -182,7 +192,7 @@ describe("openManagedBrowserOnce reconnect-first", () => {
 
   it("launches with profile args when not running", async () => {
     const { deps, spawns } = mockDeps({ running: false });
-    const url = "http://127.0.0.1:61234/";
+    const url = testHubUrl("/launch");
     const result = await openManagedBrowserOnce(url, deps);
     assert.equal(result.opened, true);
     assert.equal(result.reason, "launched");
@@ -197,7 +207,7 @@ describe("openManagedBrowserOnce reconnect-first", () => {
       running: false,
       isRunning: () => running,
     });
-    const url = "http://127.0.0.1:61234/";
+    const url = testHubUrl("/relaunch");
     await openManagedBrowserOnce(url, deps);
     assert.equal(spawns.length, 1);
     running = true;
@@ -235,7 +245,7 @@ describe("openManagedBrowserOnce reconnect-first", () => {
       writePid: () => undefined,
       log: () => undefined,
     };
-    const url = "http://127.0.0.1:1/";
+    const url = testHubUrl("/coalesce");
     const p1 = openManagedBrowserOnce(url, deps);
     const p2 = openManagedBrowserOnce(url, deps);
     release();
