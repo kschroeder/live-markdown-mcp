@@ -57,13 +57,47 @@ describe("detectBrowserProduct", () => {
 });
 
 describe("resolveExecutableForLabel", () => {
-  it("resolves Brave to brave.exe when installed (Windows)", () => {
-    if (process.platform !== "win32") return;
+  it("resolves Brave to a Brave binary when Brave is installed", (t) => {
     const exe = resolveExecutableForLabel("Brave com.brave.Browser");
-    // Brave is installed on the development machine used for this feature.
-    if (!exe) return;
-    assert.match(exe, /brave\.exe$/i);
-    assert.doesNotMatch(exe, /[\\/]Chrome[\\/].*chrome\.exe$/i);
+    if (!exe) {
+      t.skip("Brave not installed (or not on standard install paths)");
+      return;
+    }
+    assert.match(exe, /brave/i);
+    // Must not silently fall back to Google Chrome when the label is Brave.
+    assert.doesNotMatch(exe, /[\\/]Google[\\/]Chrome[\\/]/i);
+    assert.ok(fs.existsSync(exe), `resolved path missing: ${exe}`);
+  });
+
+  it("resolves Chrome to a Chrome binary when Chrome is installed", (t) => {
+    const exe = resolveExecutableForLabel("Google Chrome com.google.Chrome");
+    if (!exe) {
+      t.skip("Google Chrome not installed (or not on standard install paths)");
+      return;
+    }
+    assert.match(exe, /chrome/i);
+    assert.doesNotMatch(exe, /brave/i);
+    assert.ok(fs.existsSync(exe), `resolved path missing: ${exe}`);
+  });
+
+  it("resolves Edge to msedge/edge when Edge is installed", (t) => {
+    const exe = resolveExecutableForLabel("Microsoft Edge");
+    if (!exe) {
+      t.skip("Microsoft Edge not installed (or not on standard install paths)");
+      return;
+    }
+    assert.match(exe, /msedge|edge/i);
+    assert.ok(fs.existsSync(exe), `resolved path missing: ${exe}`);
+  });
+
+  it("resolves Firefox when Firefox is installed", (t) => {
+    const exe = resolveExecutableForLabel("Firefox org.mozilla.firefox");
+    if (!exe) {
+      t.skip("Firefox not installed (or not on standard install paths)");
+      return;
+    }
+    assert.match(exe, /firefox/i);
+    assert.ok(fs.existsSync(exe), `resolved path missing: ${exe}`);
   });
 });
 

@@ -140,8 +140,14 @@ npm run start:hub          # hub only (stays up until Ctrl+C; no MCP client time
 npm run start:mcp          # MCP stdio server (spawns hub as needed)
 npm run dev:web            # Vite UI against a hub on :7420 (optional proxy)
 npm run test:unit          # shared + hub unit tests
+npm run test:local         # unit + sticky-port + browser policy + default-browser
 npm run test:sticky-port   # sticky port integration (uses real app data dir)
+npm run test:default-browser  # OS default product → binary (skips if browser missing)
 ```
+
+Install-dependent checks (Brave/Chrome/Edge/Firefox present on disk, OS default detection)
+**skip** with a clear message when the browser is not installed — they do not fail CI machines without that browser.
+
 
 Packages:
 

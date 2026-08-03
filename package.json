@@ -18,6 +18,7 @@
     "test:sticky-port": "tsx scripts/test-sticky-port.mts",
     "test:browser-policy": "tsx scripts/test-browser-policy.mts",
     "test:default-browser": "tsx scripts/test-default-browser.mts",
+    "test:local": "npm run test:unit && npm run test:browser-policy && npm run test:sticky-port && npm run test:default-browser",
     "test:e2e": "npm run test:e2e:all -w @markdown-mcp/web"
   },
   "engines": {

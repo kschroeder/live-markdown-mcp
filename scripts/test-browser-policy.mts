@@ -30,19 +30,21 @@ async function main() {
   const s = mergeSettings({ preferredPort: 52000 });
   assert.equal(s.preferredPort, 52000);
 
-  // Launch policy with mocks
+  // Launch policy with mocks (no real browser required)
   resetBrowserFlag();
   let spawnCount = 0;
+  let running = false;
   const deps: BrowserDeps = {
     resolveDefaultBrowser: async () => ({
       family: "chromium",
       executable: "chrome-fake",
       name: "Chrome",
     }),
-    isRunning: () => false,
+    isRunning: () => running,
     spawnBrowser: (_exe, args) => {
       spawnCount++;
       assert.ok(args.some((a) => a.startsWith("--user-data-dir=")));
+      running = true; // simulate managed session now alive
       return { pid: 1001, unref() {} } as never;
     },
     ensureProfileDir: () => profile,
@@ -54,22 +56,17 @@ async function main() {
   assert.equal(r1.opened, true);
   assert.equal(spawnCount, 1);
 
+  // While session is running, reconnect-first must not spawn again
   const r2 = await openManagedBrowserOnce("http://127.0.0.1:1/", deps);
   assert.equal(r2.reason, "already_running");
   assert.equal(spawnCount, 1);
 
+  // User closed browser — allow a later relaunch
+  running = false;
   resetBrowserFlag();
-  const depsRunning: BrowserDeps = {
-    ...deps,
-    isRunning: () => true,
-    spawnBrowser: () => {
-      spawnCount++;
-      return { pid: 1, unref() {} } as never;
-    },
-  };
-  const r3 = await openManagedBrowserOnce("http://127.0.0.1:1/", depsRunning);
-  assert.equal(r3.reason, "already_running");
-  assert.equal(spawnCount, 1, "must not spawn when already running");
+  const r3 = await openManagedBrowserOnce("http://127.0.0.1:1/", deps);
+  assert.equal(r3.opened, true);
+  assert.equal(spawnCount, 2);
 
   // Arg builders for common browsers
   assert.ok(buildBrowserArgs("chromium", profile, "http://x/").length >= 2);

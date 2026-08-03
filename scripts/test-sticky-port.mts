@@ -57,6 +57,11 @@ async function startHubWithExistingSettings(): Promise<{
 }
 
 async function main() {
+  if (!fs.existsSync(hubCli)) {
+    console.log("SKIP: hub CLI not built (run npm run build first)");
+    process.exit(0);
+  }
+
   // --- Case 1: first start picks high port and persists preferredPort
   seedSettings({
     firstRunCompleted: true,
