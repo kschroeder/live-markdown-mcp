@@ -3,6 +3,8 @@ export const APP_DIR_NAME = "markdown-mcp";
 
 export const DEFAULT_SETTINGS: AppSettings = {
   bindHost: "127.0.0.1",
+  /** null = pick a free high port on first hub start and persist it. */
+  preferredPort: null,
   allowedRoots: [],
   theme: "system",
   openBrowserOnFirstFileEvent: true,
@@ -12,11 +14,21 @@ export const DEFAULT_SETTINGS: AppSettings = {
   firstRunCompleted: false,
 };
 
+/** Inclusive high/ephemeral range used for sticky hub ports. */
+export const PREFERRED_PORT_MIN = 49152;
+export const PREFERRED_PORT_MAX = 65535;
+
 export type ThemePreference = "light" | "dark" | "system";
 
 export interface AppSettings {
   /** HTTP bind host. Default 127.0.0.1 */
   bindHost: string;
+  /**
+   * Sticky hub listen port in the high/unused range.
+   * null = not chosen yet (hub picks a free high port and writes it back).
+   * Change takes effect on next hub restart.
+   */
+  preferredPort: number | null;
   /** Absolute path prefixes that may be scoped. Empty = allow any absolute path. */
   allowedRoots: string[];
   theme: ThemePreference;
@@ -103,12 +115,26 @@ export interface ClientRegisterResponse {
   state: HubPublicState;
 }
 
+export function normalizePreferredPort(value: unknown): number | null {
+  if (value === null || value === undefined || value === "") return null;
+  const n = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  const port = Math.trunc(n);
+  if (port < 1 || port > 65535) return null;
+  return port;
+}
+
 export function mergeSettings(
   partial: Partial<AppSettings> | null | undefined
 ): AppSettings {
+  const preferredPort =
+    partial && "preferredPort" in partial
+      ? normalizePreferredPort(partial.preferredPort)
+      : DEFAULT_SETTINGS.preferredPort;
   return {
     ...DEFAULT_SETTINGS,
     ...(partial ?? {}),
     allowedRoots: partial?.allowedRoots ?? DEFAULT_SETTINGS.allowedRoots,
+    preferredPort,
   };
 }
