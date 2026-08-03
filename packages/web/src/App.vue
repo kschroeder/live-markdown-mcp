@@ -270,6 +270,24 @@ const rootsText = computed({
     };
   },
 });
+
+/** Empty / invalid number input ↔ null preferredPort (auto). */
+const preferredPortModel = computed({
+  get: () =>
+    draftSettings.value.preferredPort == null
+      ? ("" as unknown as number)
+      : draftSettings.value.preferredPort,
+  set: (v: number | string) => {
+    const n = typeof v === "number" ? v : Number(v);
+    draftSettings.value = {
+      ...draftSettings.value,
+      preferredPort:
+        v === "" || v === null || v === undefined || !Number.isFinite(n) || n <= 0
+          ? null
+          : Math.trunc(n),
+    };
+  },
+});
 </script>
 
 <template>
@@ -470,6 +488,23 @@ const rootsText = computed({
             </div>
 
             <div class="field">
+              <label for="preferredPort">Preferred port</label>
+              <input
+                id="preferredPort"
+                v-model.number="preferredPortModel"
+                type="number"
+                min="1"
+                max="65535"
+                step="1"
+                placeholder="Auto (high port)"
+              />
+              <p class="hint">
+                Sticky hub port (high ports 49152–65535 preferred). Restart the hub after changing.
+                Leave empty for auto-pick on next start.
+              </p>
+            </div>
+
+            <div class="field">
               <label for="roots">Allowed path roots (one per line)</label>
               <textarea id="roots" v-model="rootsText" spellcheck="false" />
               <p class="hint">Empty means any path may be scoped.</p>
@@ -479,7 +514,7 @@ const rootsText = computed({
               <input v-model="draftSettings.openBrowserOnFirstFileEvent" type="checkbox" />
               <span>
                 <strong>Open browser on first file event</strong>
-                Not when the hub starts.
+                Uses a managed profile; skips launch if a preview browser is already running.
               </span>
             </label>
             <label class="check">
@@ -530,6 +565,19 @@ const rootsText = computed({
       <div class="field">
         <label for="wizHost">Bind host</label>
         <input id="wizHost" v-model="draftSettings.bindHost" type="text" spellcheck="false" />
+      </div>
+      <div class="field">
+        <label for="wizPort">Preferred port</label>
+        <input
+          id="wizPort"
+          v-model.number="preferredPortModel"
+          type="number"
+          min="1"
+          max="65535"
+          step="1"
+          placeholder="Auto (high port)"
+        />
+        <p class="hint">Optional sticky port. Leave empty to auto-pick a free high port.</p>
       </div>
       <div class="field">
         <label for="wizRoots">Allowed path roots</label>

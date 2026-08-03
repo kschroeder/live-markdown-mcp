@@ -34,6 +34,7 @@ export function seedSettings(partial: Record<string, unknown> = {}): void {
   const file = path.join(dir, "settings.json");
   let base: Record<string, unknown> = {
     bindHost: "127.0.0.1",
+    preferredPort: null,
     allowedRoots: [],
     theme: "light",
     openBrowserOnFirstFileEvent: false,

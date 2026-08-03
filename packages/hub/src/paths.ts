@@ -33,6 +33,16 @@ export function settingsPath(): string {
   return path.join(getAppDir(), "settings.json");
 }
 
+/** Chromium/Firefox user-data (or profile) directory owned by MarkdownMCP. */
+export function browserProfileDir(): string {
+  return path.join(getAppDir(), "browser-profile");
+}
+
+/** Last browser process we launched (for reconnect-first checks). */
+export function browserPidPath(): string {
+  return path.join(getAppDir(), "browser.pid");
+}
+
 /** Normalize for comparisons on Windows. */
 export function normalizePath(p: string): string {
   const resolved = path.resolve(p);

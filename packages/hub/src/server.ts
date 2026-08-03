@@ -11,13 +11,14 @@ import type { AppSettings, HubEvent, HubPublicState } from "@markdown-mcp/shared
 import { FileStore } from "./store.js";
 import { PathWatcher } from "./watcher.js";
 import { loadSettings, saveSettings, updateSettings } from "./settings.js";
-import { openBrowserOnce, resetBrowserFlag } from "./browser.js";
+import { openManagedBrowserOnce, resetBrowserFlag } from "./browser.js";
 import {
   clearHubState,
   releaseLock,
   tryAcquireLock,
   writeHubState,
 } from "./lock.js";
+import { bindHttpServer } from "./port.js";
 
 const CLIENT_GRACE_MS = 2000;
 
@@ -40,7 +41,11 @@ export async function startHub(options?: {
 
   const settings = loadSettings();
   const host = options?.host ?? settings.bindHost ?? "127.0.0.1";
-  const preferredPort = options?.port ?? 0;
+  /** Explicit CLI/test port wins over settings; otherwise sticky preferredPort. */
+  const preferredPort =
+    options?.port != null && options.port > 0
+      ? options.port
+      : settings.preferredPort;
 
   const store = new FileStore(settings);
   resetBrowserFlag();
@@ -84,11 +89,16 @@ export async function startHub(options?: {
   async function maybeOpenBrowser(): Promise<void> {
     const s = store.getSettings();
     if (!s.openBrowserOnFirstFileEvent) return;
-    if (store.getBrowserOpened()) return;
-    const opened = await openBrowserOnce(store.publicState().hubUrl || runtimeUrl);
-    if (opened) {
-      store.setBrowserOpened(true);
-      broadcastState();
+    // Reconnect-first: still probe managed browser even if this hub process
+    // already marked browserOpened (covers racey double file events).
+    const result = await openManagedBrowserOnce(
+      store.publicState().hubUrl || runtimeUrl
+    );
+    if (result.opened || result.reason === "already_running") {
+      if (!store.getBrowserOpened()) {
+        store.setBrowserOpened(true);
+        broadcastState();
+      }
     }
   }
 
@@ -278,8 +288,17 @@ export async function startHub(options?: {
   });
 
   const server: Server = createServer(getRequestListener(app.fetch));
-  const wss = new WebSocketServer({ server, path: "/ws" });
 
+  let runtimeUrl = "";
+
+  // Bind before attaching WebSocketServer so EADDRINUSE retries do not surface
+  // as unhandled errors on the ws package.
+  const bound = await bindHttpServer(server, host, preferredPort);
+  const port = bound.port;
+  runtimeUrl = `http://${host}:${port}/`;
+  store.setHubUrl(runtimeUrl);
+
+  const wss = new WebSocketServer({ server, path: "/ws" });
   wss.on("connection", (ws) => {
     sockets.add(ws);
     store.setClientCount(clients.size);
@@ -287,23 +306,25 @@ export async function startHub(options?: {
     ws.on("close", () => sockets.delete(ws));
     ws.on("error", () => sockets.delete(ws));
   });
-
-  let runtimeUrl = "";
-
-  await new Promise<void>((resolve, reject) => {
-    server.once("error", reject);
-    server.listen(preferredPort, host, () => {
-      resolve();
-    });
+  wss.on("error", (err) => {
+    console.error("[markdown-mcp-hub] websocket server error:", err);
   });
 
-  const addr = server.address();
-  if (!addr || typeof addr === "string") {
-    throw new Error("Failed to bind server");
+  // Persist sticky port when we chose one or had to fall back from a collision.
+  const cliForced = options?.port != null && options.port > 0;
+  if (!cliForced) {
+    const currentPreferred = store.getSettings().preferredPort;
+    if (currentPreferred !== port) {
+      const next = saveSettings({ ...store.getSettings(), preferredPort: port });
+      store.setSettings(next);
+      console.log(
+        `[markdown-mcp-hub] sticky preferredPort set to ${port}` +
+          (bound.changedFromPreferred
+            ? ` (previous ${preferredPort} unavailable)`
+            : "")
+      );
+    }
   }
-  const port = addr.port;
-  runtimeUrl = `http://${host}:${port}/`;
-  store.setHubUrl(runtimeUrl);
 
   writeHubState({
     port,
